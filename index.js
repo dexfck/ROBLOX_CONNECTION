@@ -1,21 +1,28 @@
-import express from "express"
-import cors from "cors"
-import dotenv from "dotenv"
-import connectDB from "./database/connection.js"
-import playerRoutes from "./routes/playerRoutes.js"
+import express from 'express';
+import cors from 'cors';
+import dotenv from 'dotenv';
+import connectDB from './database/connection.js';
+import playerRoutes from './routes/playerRoutes.js';
 
-dotenv.config()
+dotenv.config();
 
-const app = express()
-const PORT = process.env.PORT || 3000
+const app = express();
 
-connectDB()
+app.use(cors());
+app.use(express.json());
 
-app.use(cors())
-app.use(express.json())
+app.get('/favicon.ico', (req, res) => res.status(204).end());
+app.get('/favicon.png', (req, res) => res.status(204).end());
 
-app.use("/api/players", playerRoutes)
+app.use(async (req, res, next) => {
+    try {
+        await connectDB();
+        next();
+    } catch (error) {
+        res.status(500).json({ error: 'Error interno de conexion a la base de datos' });
+    }
+});
 
-app.listen(PORT, () => {
-    console.log(`Servidor activo escuchando en el puerto ${PORT}`)
-})
+app.use('/api/players', playerRoutes);
+
+export default app;
