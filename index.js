@@ -14,6 +14,8 @@ app.use(express.json());
 app.get('/favicon.ico', (req, res) => res.status(204).end());
 app.get('/favicon.png', (req, res) => res.status(204).end());
 
+app.get('/', (req, res) => res.status(200).json({'API roblox_connection iniciada'}))
+
 app.use(async (req, res, next) => {
     try {
         await connectDB();
